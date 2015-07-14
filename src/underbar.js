@@ -187,6 +187,7 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+      if (!Array.isArray(collection)) { return collection }
       var startI = 0;
       if (accumulator === undefined) {
           accumulator = collection[0];
@@ -225,7 +226,11 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    if(iterator === undefined){ var iterator = function(thing){return thing};}
+      return _.reduce(collection, function(pv, cv) {
+          return (pv && iterator(cv)) ? true : false ;
+      }, true);
+      // TIP: Try re-using reduce() here.
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
