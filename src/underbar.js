@@ -277,7 +277,6 @@
       for (var i = 1; i < arguments.length; i++) {
           for (var key in arguments[i]) {
               if(obj.hasOwnProperty(key)){
-              console.log("woobie");
               } else { 
                 obj[key] = arguments[i][key] ;
               }
@@ -327,16 +326,21 @@
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
-  _.memoize = function(func) {
-      var result;
-      var cache = _.memoize.cache;
 
-      return function() {
-        if (cache[arguments[0].toString()] === "") {
-              cache[arguments[0]] = func.apply(this, arguments);
-          }
-          return cache[arguments[0]];
-      };
+  _.memoize = function(func) {
+
+    var result;
+    var cache = {};
+    
+    return function() {
+      if (!arguments in cache) {
+        result = func.apply(this, arguments);
+        cache[arguments] = result;
+      } else {
+        result = cache[arguments];
+      }
+      return result;
+    };
   };
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
@@ -345,6 +349,12 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var arglist = [];
+    for (var i = 2; i < arguments.length; i++){
+      arglist.push(arguments[i]);
+    }
+      var result = setTimeout(function(){return func.apply(this, arglist)},wait);
+    return result;
   };
 
 
@@ -359,8 +369,10 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var output = array.slice();
+    output.sort(function() { return 0.5 - Math.random() });
+    return output;
   };
-
 
   /**
    * EXTRA CREDIT
