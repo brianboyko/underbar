@@ -327,21 +327,28 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
 
-  _.memoize = function(func) {
-
-    var result;
-    var cache = {};
-    
-    return function() {
-      if (!arguments in cache) {
-        result = func.apply(this, arguments);
-        cache[arguments] = result;
-      } else {
-        result = cache[arguments];
-      }
-      return result;
+ /*   _.memoize = function(func, hasher) {
+    var memoize = function(key) {
+      var cache = memoize.cache;
+      var address = '' + (hasher ? hasher.apply(this, arguments) : key);
+      if (!_.has(cache, address)) cache[address] = func.apply(this, arguments);
+      return cache[address];
     };
+    memoize.cache = {};
+    return memoize;
   };
+*/
+ _.memoize = function(func) {
+     var cache = {};
+     return function() {
+         var stringArgs = JSON.stringify(arguments);
+         if (cache[stringArgs] === undefined) {
+             cache[stringArgs] = func.apply(this, arguments);
+         }
+         return cache[stringArgs];
+     };
+ };
+
   // Delays a function for the given number of milliseconds, and then calls
   // it with the arguments supplied.
   //
